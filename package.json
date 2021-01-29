@@ -9,7 +9,6 @@
   "scripts": {
     "start": "sanity start",
     "build": "sanity build",
-    "deploy": "npm run build && gh-pages -d build"
   },
   "keywords": [
     "sanity"
