@@ -11,7 +11,10 @@
           <span>Go Back</span>
         </span>
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" v-if="!blog && this.isGetBlogStart">
+        <v-skeleton-loader type="article"></v-skeleton-loader>
+      </v-col>
+      <v-col cols="12" v-if="!this.isGetBlogStart && blog">
         <v-card flat color="transparent">
           <v-card-title>Blog Title</v-card-title>
           <v-card-subtitle>January 28, 2021</v-card-subtitle>
@@ -34,3 +37,46 @@
     </v-row>
   </section>
 </template>
+
+<script>
+import sanityService from "@/services/sanity";
+import commonUtility from "../../common/utility";
+
+export default {
+  data() {
+    return {
+      isGetBlogStart: false,
+      blog: null
+    };
+  },
+
+  mixins: [commonUtility],
+
+  computed: {
+    slug() {
+      return this.$route.params.slug;
+    }
+  },
+
+  methods: {
+    async getBlog() {
+      try {
+        const query = "*[_type == 'post' && slug.current == $slug]";
+        const parameters = { slug: this.slug };
+        this.isGetBlogStart = true;
+        const blog = await sanityService.fetch(query, parameters);
+        if (blog.length === 0) return this.$router.go(-1);
+        this.blog = blog[0];
+        this.isGetBlogStart = false;
+      } catch (_) {
+        this.$router.go(-1);
+      }
+    }
+  },
+
+  async created() {
+    if (!this.slug) this.$router.go(-1);
+    await this.getBlog();
+  }
+};
+</script>
