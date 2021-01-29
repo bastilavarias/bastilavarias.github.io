@@ -9,7 +9,10 @@
           <v-list-item :key="index" three-line>
             <v-list-item-content>
               <v-list-item-title
-                ><router-link :to="blog.to" :style="{ textDecoration: 'none' }">
+                ><router-link
+                  :to="{ name: 'Blog Item Page', params: { slug: blog.slug } }"
+                  :style="{ textDecoration: 'none' }"
+                >
                   <span class="font-weight-bold text--primary">{{
                     blog.title
                   }}</span>
@@ -17,7 +20,7 @@
               >
               <v-list-item-subtitle>{{ blog.excerpt }}</v-list-item-subtitle>
               <v-list-item-subtitle
-                >Created {{ blog.date }}</v-list-item-subtitle
+                >Created {{ formatDate(blog.createdAt) }}</v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>
@@ -28,32 +31,34 @@
 </template>
 
 <script>
+import { GET_BLOGS } from "@/store/typeDefs/blog";
+import commonUtility from "../../common/utility";
+
 export default {
   data() {
     return {
-      blogs: [
-        {
-          title: "Blog 1",
-          excerpt: "Excerpt 1",
-          date: "January 28, 2021",
-          to: { name: "Blog Item Page", params: { slug: "blog-1" } }
-        },
-
-        {
-          title: "Blog 2",
-          excerpt: "Excerpt 2",
-          date: "January 28, 2021",
-          to: { name: "Blog Item Page", params: { slug: "blog-2" } }
-        },
-
-        {
-          title: "Blog 3",
-          excerpt: "Excerpt 3",
-          date: "January 28, 2021",
-          to: { name: "Blog Item Page", params: { slug: "blog-3" } }
-        }
-      ]
+      isGetBlogsStart: false
     };
+  },
+
+  mixins: [commonUtility],
+
+  computed: {
+    blogs() {
+      return this.$store.state.blog.blogs;
+    }
+  },
+
+  methods: {
+    async getBlogs() {
+      this.isGetBlogsStart = true;
+      await this.$store.dispatch(GET_BLOGS);
+      this.isGetBlogsStart = false;
+    }
+  },
+
+  async created() {
+    await this.getBlogs();
   }
 };
 </script>
