@@ -72,24 +72,36 @@
           </v-col>
           <v-col cols="12">
             <div class="overline">Latest Blogs</div>
-            <template v-for="(blog, index) in latestBlogs">
-              <v-list-item two-line>
-                <v-list-item-content>
-                  <v-list-item-title class="body-1">{{
-                    blog.title
-                  }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ blog.date }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider v-if="index !== latestBlogs.length - 1"></v-divider>
-            </template>
-            <div class="d-flex justify-space-between align-center">
-              <div class="flex-grow-1"></div>
-              <v-btn small text>
-                <span class="text-capitalize text-decoration-underline"
-                  >Read More</span
-                >
-              </v-btn>
+            <div v-if="isGetLatestBlogsStart">
+              <template v-for="n in 3">
+                <v-skeleton-loader
+                  type="list-item-two-line"
+                  :key="n"
+                ></v-skeleton-loader>
+              </template>
+            </div>
+            <div v-if="!isGetLatestBlogsStart">
+              <template v-for="(blog, index) in latestBlogs">
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title class="body-1">{{
+                      blog.title
+                    }}</v-list-item-title>
+                    <v-list-item-subtitle>{{
+                      formatDate(blog.createdAt)
+                    }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider v-if="index !== latestBlogs.length - 1"></v-divider>
+              </template>
+              <div class="d-flex justify-space-between align-center">
+                <div class="flex-grow-1"></div>
+                <v-btn small text>
+                  <span class="text-capitalize text-decoration-underline"
+                    >Read More</span
+                  >
+                </v-btn>
+              </div>
             </div>
           </v-col>
         </v-row>
@@ -99,7 +111,12 @@
 </template>
 
 <script>
+import sanityService from "@/services/sanity";
+import commonUtility from "../../common/utility";
+
 export default {
+  mixins: [commonUtility],
+
   data() {
     return {
       experiences: [
@@ -163,18 +180,28 @@ export default {
         }
       ],
 
-      latestBlogs: [
-        {
-          title: "Blog 1",
-          date: "January 28, 2021"
-        },
+      latestBlogs: [],
 
-        {
-          title: "Blog 2",
-          date: "January 28, 2021"
-        }
-      ]
+      isGetLatestBlogsStart: false
     };
+  },
+
+  methods: {
+    async getLatestBlogs() {
+      try {
+        const query =
+          "*[_type == 'post'] | order(_createdAt desc) {title, slug, _createdAt}[0...3]";
+        this.isGetLatestBlogsStart = true;
+        this.latestBlogs = await sanityService.fetch(query);
+        this.isGetLatestBlogsStart = false;
+      } catch (_) {
+        this.latestBlogs = [];
+      }
+    }
+  },
+
+  async created() {
+    await this.getLatestBlogs();
   }
 };
 </script>
