@@ -84,9 +84,19 @@
               <template v-for="(blog, index) in latestBlogs">
                 <v-list-item two-line>
                   <v-list-item-content>
-                    <v-list-item-title class="body-1">{{
-                      blog.title
-                    }}</v-list-item-title>
+                    <v-list-item-title
+                      ><router-link
+                        :to="{
+                          name: 'Blog Item Page',
+                          params: { slug: blog.slug.current }
+                        }"
+                        class="text--primary"
+                      >
+                        <span class="font-weight-bold text--primary body-1">{{
+                          blog.title
+                        }}</span>
+                      </router-link></v-list-item-title
+                    >
                     <v-list-item-subtitle>{{
                       formatDate(blog.createdAt)
                     }}</v-list-item-subtitle>
@@ -96,7 +106,7 @@
               </template>
               <div class="d-flex justify-space-between align-center">
                 <div class="flex-grow-1"></div>
-                <v-btn small text>
+                <v-btn small text :to="{ name: 'Blogs Page' }">
                   <span class="text-capitalize text-decoration-underline"
                     >Read More</span
                   >

@@ -4,14 +4,25 @@
       <v-col cols="12">
         <span class="overline">Blogs</span>
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" v-if="isGetBlogsStart">
+        <template v-for="n in 3">
+          <v-skeleton-loader
+            type="list-item-three-line"
+            :key="n"
+          ></v-skeleton-loader>
+        </template>
+      </v-col>
+      <v-col cols="12" v-if="!isGetBlogsStart">
         <template v-for="(blog, index) in blogs">
           <v-list-item :key="index" three-line>
             <v-list-item-content>
               <v-list-item-title
                 ><router-link
-                  :to="{ name: 'Blog Item Page', params: { slug: blog.slug } }"
-                  :style="{ textDecoration: 'none' }"
+                  :to="{
+                    name: 'Blog Item Page',
+                    params: { slug: blog.slug.current }
+                  }"
+                  class="text--primary"
                 >
                   <span class="font-weight-bold text--primary">{{
                     blog.title
