@@ -16,21 +16,10 @@
       </v-col>
       <v-col cols="12" v-if="!this.isGetBlogStart && blog">
         <v-card flat color="transparent">
-          <v-card-title>Blog Title</v-card-title>
-          <v-card-subtitle>January 28, 2021</v-card-subtitle>
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-            accusantium aperiam architecto delectus eaque facilis fuga fugit, id
-            incidunt minus molestiae nisi rem rerum, suscipit vero? A accusamus
-            accusantium consequatur deserunt dolor, ea eligendi ex explicabo hic
-            in labore laudantium libero pariatur perferendis perspiciatis
-            placeat possimus quasi quia ratione similique sint soluta suscipit
-            tempore ullam unde voluptate voluptatem. Aliquid, aperiam cumque
-            fuga fugit in laborum magnam maiores minima nemo porro quia
-            recusandae tempora, tenetur? Aliquid, assumenda dolor doloribus esse
-            eveniet fugit, ipsam maxime modi obcaecati optio porro possimus qui
-            quibusdam rerum sint vitae, voluptates. Explicabo impedit nesciunt
-            optio quasi quo.
+          <v-card-title>{{ blog.title }}</v-card-title>
+          <v-card-subtitle>{{ formatDate(blog.createdAt) }}</v-card-subtitle>
+          <v-card-text class="body-1">
+            {{ blog.body[0].children[0].text }}
           </v-card-text>
         </v-card>
       </v-col>
